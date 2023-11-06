@@ -18,10 +18,16 @@ public class Server {
 
   public static final int PORT_NUMBER = 1238;
 
+  private final SensorActuatorNode logic;
+
   boolean isServerRunning;
 
   private final List<ClientHandler> connectedClients = new ArrayList<>();
   private ServerSocket serverSocket;
+
+  public Server(SensorActuatorNode logic){
+    this.logic = logic;
+  }
 
 
   /**

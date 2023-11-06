@@ -1,5 +1,7 @@
 package no.ntnu.run;
 
+import no.ntnu.greenhouse.Actuator;
+import no.ntnu.greenhouse.SensorActuatorNode;
 import no.ntnu.greenhouse.Server;
 import no.ntnu.gui.greenhouse.GreenhouseApplication;
 import no.ntnu.tools.Logger;
@@ -16,7 +18,8 @@ public class GreenhouseGuiStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    Server server = new Server();
+    SensorActuatorNode logic = new SensorActuatorNode(1);
+    Server server = new Server(logic);
     Thread serverThread = new Thread(server::startServer);
     serverThread.start();
     boolean fake = false;
