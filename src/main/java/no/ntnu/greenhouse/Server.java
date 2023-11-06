@@ -25,7 +25,7 @@ public class Server {
 
 
   /**
-   * Start TCP server for this TV.
+   * Start TCP server.
    */
   public void startServer() {
     serverSocket = openListeningSocket();

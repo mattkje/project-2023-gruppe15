@@ -1,5 +1,6 @@
 package no.ntnu.run;
 
+import no.ntnu.greenhouse.Server;
 import no.ntnu.gui.greenhouse.GreenhouseApplication;
 import no.ntnu.tools.Logger;
 
@@ -15,11 +16,18 @@ public class GreenhouseGuiStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
+    Server server = new Server();
+    Thread serverThread = new Thread(server::startServer);
+    serverThread.start();
     boolean fake = false;
+
+    //TODO Remove fake when appropriate.
     if (args.length == 1 && "fake".equals(args[0])) {
       fake = true;
       Logger.info("Using FAKE events");
     }
+
     GreenhouseApplication.startApp(fake);
+    server.stopServer();
   }
 }
