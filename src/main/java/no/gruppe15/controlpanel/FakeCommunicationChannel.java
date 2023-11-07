@@ -15,8 +15,6 @@ import no.gruppe15.tools.Logger;
  * A fake communication channel. Emulates the node discovery (over the Internet).
  * In practice - spawn some events at specified time (specified delay).
  * Note: this class is used only for debugging, you can remove it in your final project!
- *
- * TODO: Retire class.
  */
 public class FakeCommunicationChannel implements CommunicationChannel {
 

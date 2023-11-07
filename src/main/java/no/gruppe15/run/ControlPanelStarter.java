@@ -1,8 +1,32 @@
 package no.gruppe15.run;
 
-import no.gruppe15.controlpanel.ControlPanelClient;
+import static no.gruppe15.greenhouse.GreenhouseSimulator.PORT_NUMBER;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import no.gruppe15.controlpanel.CommunicationChannel;
+import no.gruppe15.controlpanel.ControlPanelLogic;
+import no.gruppe15.controlpanel.FakeCommunicationChannel;
+import no.gruppe15.gui.controlpanel.ControlPanelApplication;
+import no.gruppe15.tools.Logger;
+
+/**
+ * Starter class for the control panel.
+ * Note: we could launch the Application class directly, but then we would have issues with the
+ * debugger (JavaFX modules not found)
+ */
 public class ControlPanelStarter {
+  private static final String SERVER_HOST = "localhost";
+  private final boolean fake;
+  private Socket socket;
+  private InputStream inputStream;
+  private OutputStream outputStream;
+
+  public ControlPanelStarter(boolean fake) {
+    this.fake = fake;
+  }
 
   /**
    * Entrypoint for the application.
@@ -12,14 +36,86 @@ public class ControlPanelStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    ControlPanelClient client = new ControlPanelClient();
-    if (client.start()) {
-      System.out.println("Server found: " + client.getServerHost());
+    boolean fake = false;
+    if (args.length == 1 && "fake".equals(args[0])) {
+      fake = true;
+      Logger.info("Using FAKE events");
+    }
+    ControlPanelStarter starter = new ControlPanelStarter(fake);
+    starter.start();
+  }
+
+  private void start() {
+    ControlPanelLogic logic = new ControlPanelLogic();
+    CommunicationChannel channel = initiateCommunication(logic, fake);
+    ControlPanelApplication.startApp(logic, channel);
+    // This code is reached only after the GUI-window is closed
+    Logger.info("Exiting the control panel application");
+    stopCommunication();
+  }
+
+  private CommunicationChannel initiateCommunication(ControlPanelLogic logic, boolean fake) {
+    CommunicationChannel channel;
+    if (fake) {
+      channel = initiateFakeSpawner(logic);
     } else {
-      System.out.println("No server was found. Starting in disconnected mode");
+      channel = initiateSocketCommunication(logic);
+    }
+    return channel;
+  }
+
+  private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
+    // TODO - here you initiate TCP/UDP socket communication
+    // You communication class(es) may want to get reference to the logic and call necessary
+    // logic methods when events happen (for example, when sensor data is received)
+    try {
+      socket = new Socket(SERVER_HOST, PORT_NUMBER);
+      inputStream = socket.getInputStream();
+      outputStream = socket.getOutputStream();
+      System.out.println("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
+    } catch (IOException e){
+      System.err.println("Could not connect to server: " + e.getMessage());
     }
 
-    client.stopCommunication();
+    return initiateFakeSpawner(logic);
+  }
+
+  private CommunicationChannel initiateFakeSpawner(ControlPanelLogic logic) {
+    // Here we pretend that some events will be received with a given delay
+    FakeCommunicationChannel spawner = new FakeCommunicationChannel(logic);
+    logic.setCommunicationChannel(spawner);
+    spawner.spawnNode("4;3_window", 2);
+    spawner.spawnNode("1", 3);
+    spawner.spawnNode("1", 4);
+    spawner.advertiseSensorData("4;temperature=27.4 °C,temperature=26.8 °C,humidity=80 %", 4);
+    spawner.spawnNode("8;2_heater", 5);
+    spawner.advertiseActuatorState(4, 1, true, 5);
+    spawner.advertiseActuatorState(4,  1, false, 6);
+    spawner.advertiseActuatorState(4,  1, true, 7);
+    spawner.advertiseActuatorState(4,  2, true, 7);
+    spawner.advertiseActuatorState(4,  1, false, 8);
+    spawner.advertiseActuatorState(4,  2, false, 8);
+    spawner.advertiseActuatorState(4,  1, true, 9);
+    spawner.advertiseActuatorState(4,  2, true, 9);
+    spawner.advertiseSensorData("4;temperature=22.4 °C,temperature=26.0 °C,humidity=81 %", 9);
+    spawner.advertiseSensorData("1;humidity=80 %,humidity=82 %", 10);
+    spawner.advertiseRemovedNode(8, 11);
+    spawner.advertiseRemovedNode(8, 12);
+    spawner.advertiseSensorData("1;temperature=25.4 °C,temperature=27.0 °C,humidity=67 %", 13);
+    spawner.advertiseSensorData("4;temperature=25.4 °C,temperature=27.0 °C,humidity=82 %", 14);
+    spawner.advertiseSensorData("4;temperature=25.4 °C,temperature=27.0 °C,humidity=82 %", 16);
+    return spawner;
+  }
+
+  private void stopCommunication() {
+    // TODO - here you stop the TCP/UDP socket communication
+    try {
+      socket.close();
+      inputStream.close();
+      outputStream.close();
+    } catch (IOException e){
+      System.err.println("Could not stop communication: " + e.getMessage());
+    }
 
   }
 }

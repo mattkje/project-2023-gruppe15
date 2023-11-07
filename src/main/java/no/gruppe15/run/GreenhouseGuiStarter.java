@@ -1,7 +1,7 @@
 package no.gruppe15.run;
 
-import no.gruppe15.greenhouse.GreenhouseSimulator;
 import no.gruppe15.gui.greenhouse.GreenhouseApplication;
+import no.gruppe15.tools.Logger;
 
 /**
  * Starter for GUI version of the greenhouse simulator.
@@ -15,11 +15,12 @@ public class GreenhouseGuiStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    GreenhouseSimulator server = new GreenhouseSimulator();
-    Thread serverThread = new Thread(server::start);
-    serverThread.start();
+    boolean fake = false;
+    if (args.length == 1 && "fake".equals(args[0])) {
+      fake = true;
+      Logger.info("Using FAKE events");
+    }
 
-    GreenhouseApplication.startApp();
-    server.stop();
+    GreenhouseApplication.startApp(fake);
   }
 }

@@ -7,15 +7,11 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import no.gruppe15.command.SelectCommand;
-import no.gruppe15.command.TurnOffCommand;
-import no.gruppe15.command.TurnOnCommand;
 import no.gruppe15.controlpanel.CommunicationChannel;
 import no.gruppe15.controlpanel.ControlPanelLogic;
 import no.gruppe15.controlpanel.SensorActuatorNodeInfo;
@@ -64,16 +60,10 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
 
   @Override
   public void start(Stage stage) {
-    /*
     if (channel == null) {
       throw new IllegalStateException(
           "No communication channel. See the README on how to use fake event spawner!");
     }
-     ----
-    if (!channel.open()) {
-      logic.onCommunicationChannelClosed();
-    }
-     */
 
     stage.setMinWidth(WIDTH);
     stage.setMinHeight(HEIGHT);
@@ -83,8 +73,9 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
     stage.show();
     logic.addListener(this);
     logic.setCommunicationChannelListener(this);
-    onNodeAdded(new SensorActuatorNodeInfo(1)); //TODO: remove
-
+    if (!channel.open()) {
+      logic.onCommunicationChannelClosed();
+    }
   }
 
   private static Label createEmptyContent() {
@@ -188,22 +179,12 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
   }
 
   private Tab createNodeTab(SensorActuatorNodeInfo nodeInfo) {
-
-    Button button = new Button("Select actuator");
-    button.setOnAction(e -> new SelectCommand("1"));
-
-    Button button2 = new Button("Select actuator");
-    button.setOnAction(e -> new TurnOnCommand());
-
-    Button button3 = new Button("Select actuator");
-    button.setOnAction(e -> new TurnOffCommand());
-
     Tab tab = new Tab("Node " + nodeInfo.getId());
     SensorPane sensorPane = createEmptySensorPane();
     sensorPanes.put(nodeInfo.getId(), sensorPane);
     ActuatorPane actuatorPane = new ActuatorPane(nodeInfo.getActuators());
     actuatorPanes.put(nodeInfo.getId(), actuatorPane);
-    tab.setContent(new VBox(sensorPane, actuatorPane, button, button2, button3));
+    tab.setContent(new VBox(sensorPane, actuatorPane));
     nodeTabs.put(nodeInfo.getId(), tab);
     return tab;
   }

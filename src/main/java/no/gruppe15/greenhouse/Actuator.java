@@ -7,8 +7,6 @@ import no.gruppe15.listeners.common.ActuatorListener;
 /**
  * An actuator that can change the environment in a way. The actuator will make impact on the
  * sensors attached to this same node.
- *
- * FYI: An actuator is a hydraulic motor.
  */
 public class Actuator {
   private static int nextId = 1;
