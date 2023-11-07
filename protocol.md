@@ -21,6 +21,15 @@ distributed application.
 TODO - what transport-layer protocol do you use? TCP? UDP? What port number(s)? Why did you 
 choose this transport layer protocol?
 
+
+TCP (Transmission control protocol) is used as our underlying 
+transport protocol for our application. This section provides an overview over why TCP was chosen
+and its roles in communication in this application.
+* **Connection-Oriented:** TCP is a connection-based protocal, meaning it establishes a connection before any data is transferred.
+* **Reliability:** TCP ensures reliable and ordered data transmission, ideal for applications that require accurate data transmissions.
+* **Port number:** Our application uses *portnumber* for TCP communication.
+
+
 ## The architecture
 
 TODO - show the general architecture of your network. Which part is a server? Who are clients? 
