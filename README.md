@@ -27,4 +27,4 @@ To run the control panel (only GUI-version is available): run the `main` method 
 
 If you want to simulate fake communication (just some periodic events happening), you can run
 both the greenhouse and control panel parts with a command line parameter `fake`. Check out
-classes in the [`no.ntnu.run` package](src/main/java/no/ntnu/run) for more details. 
+classes in the [`no.gruppe15.run` package](src/main/java/no/gruppe15/run) for more details. 
