@@ -1,10 +1,7 @@
 package no.ntnu.run;
 
 import no.ntnu.greenhouse.GreenhouseSimulator;
-import no.ntnu.greenhouse.SensorActuatorNode;
-import no.ntnu.greenhouse.GreenhouseServer;
 import no.ntnu.gui.greenhouse.GreenhouseApplication;
-import no.ntnu.tools.Logger;
 
 /**
  * Starter for GUI version of the greenhouse simulator.
@@ -18,11 +15,11 @@ public class GreenhouseGuiStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    GreenhouseServer server = new GreenhouseServer();
-    Thread serverThread = new Thread(server::startServer);
+    GreenhouseSimulator server = new GreenhouseSimulator();
+    Thread serverThread = new Thread(server::start);
     serverThread.start();
 
     GreenhouseApplication.startApp();
-    server.stopServer();
+    server.stop();
   }
 }

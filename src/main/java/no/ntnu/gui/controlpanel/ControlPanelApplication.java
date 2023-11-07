@@ -7,11 +7,15 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import no.ntnu.command.SelectCommand;
+import no.ntnu.command.TurnOffCommand;
+import no.ntnu.command.TurnOnCommand;
 import no.ntnu.controlpanel.CommunicationChannel;
 import no.ntnu.controlpanel.ControlPanelLogic;
 import no.ntnu.controlpanel.SensorActuatorNodeInfo;
@@ -79,6 +83,7 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
     stage.show();
     logic.addListener(this);
     logic.setCommunicationChannelListener(this);
+    onNodeAdded(new SensorActuatorNodeInfo(1)); //TODO: remove
 
   }
 
@@ -183,12 +188,22 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
   }
 
   private Tab createNodeTab(SensorActuatorNodeInfo nodeInfo) {
+
+    Button button = new Button("Select actuator");
+    button.setOnAction(e -> new SelectCommand("1"));
+
+    Button button2 = new Button("Select actuator");
+    button.setOnAction(e -> new TurnOnCommand());
+
+    Button button3 = new Button("Select actuator");
+    button.setOnAction(e -> new TurnOffCommand());
+
     Tab tab = new Tab("Node " + nodeInfo.getId());
     SensorPane sensorPane = createEmptySensorPane();
     sensorPanes.put(nodeInfo.getId(), sensorPane);
     ActuatorPane actuatorPane = new ActuatorPane(nodeInfo.getActuators());
     actuatorPanes.put(nodeInfo.getId(), actuatorPane);
-    tab.setContent(new VBox(sensorPane, actuatorPane));
+    tab.setContent(new VBox(sensorPane, actuatorPane, button, button2, button3));
     nodeTabs.put(nodeInfo.getId(), tab);
     return tab;
   }

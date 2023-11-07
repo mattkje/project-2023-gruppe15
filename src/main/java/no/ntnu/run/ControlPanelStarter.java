@@ -13,7 +13,14 @@ public class ControlPanelStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    ControlPanelClient starter = new ControlPanelClient();
-    starter.start();
+    ControlPanelClient client = new ControlPanelClient();
+    if (client.start()) {
+      System.out.println("Server found: " + client.getServerHost());
+    } else {
+      System.out.println("No server was found. Starting in disconnected mode");
+    }
+
+    client.stop();
+
   }
 }

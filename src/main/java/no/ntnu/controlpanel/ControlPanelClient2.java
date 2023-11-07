@@ -1,6 +1,6 @@
 package no.ntnu.controlpanel;
 
-import static no.ntnu.greenhouse.GreenhouseServer.PORT_NUMBER;
+import static no.ntnu.greenhouse.GreenhouseSimulator.PORT_NUMBER;
 
 import java.io.BufferedReader;
 import java.io.IOException;

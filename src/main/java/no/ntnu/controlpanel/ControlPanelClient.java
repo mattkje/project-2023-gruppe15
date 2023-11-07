@@ -1,6 +1,6 @@
 package no.ntnu.controlpanel;
 
-import static no.ntnu.greenhouse.GreenhouseServer.PORT_NUMBER;
+import static no.ntnu.greenhouse.GreenhouseSimulator.PORT_NUMBER;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,55 +22,58 @@ public class ControlPanelClient {
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
 
-  public void start() {
+  public boolean start() {
+    boolean connected = false;
+    CommunicationChannel channel;
     ControlPanelLogic logic = new ControlPanelLogic();
-    CommunicationChannel channel = initiateCommunication(logic);
-    ControlPanelApplication.startApp(logic, channel);
-    // This code is reached only after the GUI-window is closed
-    Logger.info("Exiting the control panel application");
-    stopCommunication();
-  }
-
-  private CommunicationChannel initiateCommunication(ControlPanelLogic logic) {
-    // TODO - here you initiate TCP/UDP socket communication
-    // You communication class(es) may want to get reference to the logic and call necessary
-    // logic methods when events happen (for example, when sensor data is received)
     try {
-      socket = new Socket(SERVER_HOST, PORT_NUMBER);
-      socketWriter = new PrintWriter(socket.getOutputStream(), true);
-      socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      channel = initiateCommunication(logic);
+      ControlPanelApplication.startApp(logic, channel);
+      // This code is reached only after the GUI-window is closed
+      Logger.info("Exiting the control panel application");
+      stopCommunication();
     } catch (IOException e) {
       System.err.println("Could not connect to the server: " + e.getMessage());
     }
-
-    return null;
+    return connected;
   }
 
-  private CommunicationChannel initiateFakeSpawner(ControlPanelLogic logic) {
-    // Here we pretend that some events will be received with a given delay
-    FakeCommunicationChannel spawner = new FakeCommunicationChannel(logic);
-    logic.setCommunicationChannel(spawner);
-    spawner.spawnNode("4;3_window", 2);
-    spawner.spawnNode("1", 3);
-    spawner.spawnNode("1", 4);
-    spawner.advertiseSensorData("4;temperature=27.4 °C,temperature=26.8 °C,humidity=80 %", 4);
-    spawner.spawnNode("8;2_heater", 5);
-    spawner.advertiseActuatorState(4, 1, true, 5);
-    spawner.advertiseActuatorState(4,  1, false, 6);
-    spawner.advertiseActuatorState(4,  1, true, 7);
-    spawner.advertiseActuatorState(4,  2, true, 7);
-    spawner.advertiseActuatorState(4,  1, false, 8);
-    spawner.advertiseActuatorState(4,  2, false, 8);
-    spawner.advertiseActuatorState(4,  1, true, 9);
-    spawner.advertiseActuatorState(4,  2, true, 9);
-    spawner.advertiseSensorData("4;temperature=22.4 °C,temperature=26.0 °C,humidity=81 %", 9);
-    spawner.advertiseSensorData("1;humidity=80 %,humidity=82 %", 10);
-    spawner.advertiseRemovedNode(8, 11);
-    spawner.advertiseRemovedNode(8, 12);
-    spawner.advertiseSensorData("1;temperature=25.4 °C,temperature=27.0 °C,humidity=67 %", 13);
-    spawner.advertiseSensorData("4;temperature=25.4 °C,temperature=27.0 °C,humidity=82 %", 14);
-    spawner.advertiseSensorData("4;temperature=25.4 °C,temperature=27.0 °C,humidity=82 %", 16);
-    return spawner;
+  /**
+   * Closes the socket and nullifies associated resources,
+   * including the socket itself, socketReader, and socketWriter.
+   */
+  public void stop() {
+    if (socket != null) {
+      try {
+        socket.close();
+      } catch (IOException e) {
+        System.err.println("Error while closing the socket: " + e.getMessage());
+      } finally {
+        socket = null;
+        socketReader = null;
+        socketWriter = null;
+      }
+    }
+  }
+
+  /**
+   * This method should return the current server host.
+   *
+   * @return the current server host.
+   */
+  public String getServerHost() {
+    return SERVER_HOST + ":" + PORT_NUMBER;
+  }
+
+  private CommunicationChannel initiateCommunication(ControlPanelLogic logic) throws IOException {
+    // TODO - here you initiate TCP/UDP socket communication
+    // You communication class(es) may want to get reference to the logic and call necessary
+    // logic methods when events happen (for example, when sensor data is received)
+    socket = new Socket(SERVER_HOST, PORT_NUMBER);
+    socketWriter = new PrintWriter(socket.getOutputStream(), true);
+    socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+    return null;
   }
 
   private void stopCommunication() {
