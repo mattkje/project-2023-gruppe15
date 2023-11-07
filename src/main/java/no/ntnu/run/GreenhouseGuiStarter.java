@@ -1,5 +1,6 @@
 package no.ntnu.run;
 
+import no.ntnu.greenhouse.GreenhouseSimulator;
 import no.ntnu.greenhouse.SensorActuatorNode;
 import no.ntnu.greenhouse.GreenhouseServer;
 import no.ntnu.gui.greenhouse.GreenhouseApplication;
@@ -17,19 +18,11 @@ public class GreenhouseGuiStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    SensorActuatorNode logic = new SensorActuatorNode(1);
-    GreenhouseServer server = new GreenhouseServer(logic);
+    GreenhouseServer server = new GreenhouseServer();
     Thread serverThread = new Thread(server::startServer);
     serverThread.start();
-    boolean fake = false;
 
-    //TODO Remove fake when appropriate.
-    if (args.length == 1 && "fake".equals(args[0])) {
-      fake = true;
-      Logger.info("Using FAKE events");
-    }
-
-    GreenhouseApplication.startApp(fake);
+    GreenhouseApplication.startApp();
     server.stopServer();
   }
 }
