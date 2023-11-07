@@ -14,7 +14,7 @@ import no.ntnu.tools.Logger;
  * @author Matti Kjellstadli, Adrian Johansen, Håkon Karlsen, Di Xie
  * @version 06.11.2023
  */
-public class Server {
+public class GreenhouseServer {
 
   public static final int PORT_NUMBER = 1238;
 
@@ -25,7 +25,7 @@ public class Server {
   private final List<ClientHandler> connectedClients = new ArrayList<>();
   private ServerSocket serverSocket;
 
-  public Server(SensorActuatorNode logic){
+  public GreenhouseServer(SensorActuatorNode logic){
     this.logic = logic;
   }
 

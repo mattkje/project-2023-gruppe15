@@ -17,7 +17,7 @@ import no.ntnu.tools.Logger;
 public class ClientHandler extends Thread {
   private final Socket socket;
 
-  private final Server server;
+  private final GreenhouseServer server;
 
   private final BufferedReader socketReader;
 
@@ -30,7 +30,7 @@ public class ClientHandler extends Thread {
    * @param server Reference to the main TCP server class
    * @throws IOException When something goes wrong with establishing the input or output streams
    */
-  public ClientHandler(Socket socket, Server server) throws IOException {
+  public ClientHandler(Socket socket, GreenhouseServer server) throws IOException {
     this.server = server;
     this.socket = socket;
     socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
