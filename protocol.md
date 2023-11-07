@@ -46,6 +46,9 @@ node type (For example: one subsection for sensor/actuator nodes, one for contro
 
 TODO - is your communication protocol connection-oriented or connection-less? Is it stateful or 
 stateless? 
+* **Connection-oriented:** With a connection-oriented protocol like TCP, we ensures a reliable and presistent connection
+between the client and the server. Meaning the data is delievered accurately and in the same order it was sent.
+* TODO -  **State Management:** 
 
 ## Types, constants
 
