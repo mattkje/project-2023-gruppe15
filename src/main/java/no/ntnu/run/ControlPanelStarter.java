@@ -13,11 +13,7 @@ public class ControlPanelStarter {
    *             use real socket communication.
    */
   public static void main(String[] args) {
-    boolean fake = true;
-    if (fake) {
-      Logger.info("Using FAKE events");
-    }
-    ControlPanelClient starter = new ControlPanelClient(fake);
+    ControlPanelClient starter = new ControlPanelClient();
     starter.start();
   }
 }

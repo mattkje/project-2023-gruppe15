@@ -1,5 +1,12 @@
 package no.ntnu.controlpanel;
 
+import static no.ntnu.greenhouse.GreenhouseServer.PORT_NUMBER;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import no.ntnu.gui.controlpanel.ControlPanelApplication;
 import no.ntnu.tools.Logger;
 
@@ -9,36 +16,33 @@ import no.ntnu.tools.Logger;
  * debugger (JavaFX modules not found)
  */
 public class ControlPanelClient {
-  private final boolean fake;
 
-  public ControlPanelClient(boolean fake) {
-    this.fake = fake;
-  }
-
+  private static final String SERVER_HOST = "localhost";
+  private Socket socket;
+  private BufferedReader socketReader;
+  private PrintWriter socketWriter;
 
   public void start() {
     ControlPanelLogic logic = new ControlPanelLogic();
-    CommunicationChannel channel = initiateCommunication(logic, fake);
+    CommunicationChannel channel = initiateCommunication(logic);
     ControlPanelApplication.startApp(logic, channel);
     // This code is reached only after the GUI-window is closed
     Logger.info("Exiting the control panel application");
     stopCommunication();
   }
 
-  private CommunicationChannel initiateCommunication(ControlPanelLogic logic, boolean fake) {
-    CommunicationChannel channel;
-    if (fake) {
-      channel = initiateFakeSpawner(logic);
-    } else {
-      channel = initiateSocketCommunication(logic);
-    }
-    return channel;
-  }
-
-  private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
+  private CommunicationChannel initiateCommunication(ControlPanelLogic logic) {
     // TODO - here you initiate TCP/UDP socket communication
     // You communication class(es) may want to get reference to the logic and call necessary
     // logic methods when events happen (for example, when sensor data is received)
+    try {
+      socket = new Socket(SERVER_HOST, PORT_NUMBER);
+      socketWriter = new PrintWriter(socket.getOutputStream(), true);
+      socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    } catch (IOException e) {
+      System.err.println("Could not connect to the server: " + e.getMessage());
+    }
+
     return null;
   }
 
