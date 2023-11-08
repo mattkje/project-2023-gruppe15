@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javafx.application.Platform;
 import no.gruppe15.listeners.greenhouse.NodeStateListener;
-import no.gruppe15.message.Message;
 import no.gruppe15.tools.Logger;
 
 /**
@@ -71,9 +69,7 @@ public class GreenhouseSimulator {
     if (fake) {
       initiateFakePeriodicSwitches();
     } else {
-      Thread serverThread = new Thread(() ->{
-        initiateRealCommunication();
-      });
+      Thread serverThread = new Thread(this::initiateRealCommunication);
       serverThread.start();
     }
   }
@@ -105,7 +101,6 @@ public class GreenhouseSimulator {
     try {
       Socket clientSocket = listeningSocket.accept();
       Logger.info("New client connected from " + clientSocket.getRemoteSocketAddress());
-      importNodesFromServer();
       return new ClientHandler(clientSocket, this);
     } catch (IOException e) {
       Logger.error("Could not accept client connection: " + e.getMessage());
@@ -113,8 +108,10 @@ public class GreenhouseSimulator {
     }
   }
 
-  public void importNodesFromServer(){
-    //TODO implement this.
+  public void handleActuator(int actuatorId, int nodeId, boolean isOn){
+    if (!isOn){
+      nodes.get(nodeId).getActuators().get(actuatorId).turnOn();
+    }
   }
 
   /**
@@ -167,14 +164,7 @@ public class GreenhouseSimulator {
     }
   }
 
-  /**
-   * Send a message to all currently connected clients.
-   *
-   * @param message The message to send
-   */
-  public void broadcastMessageToAllClients(Message message) {
-    connectedClients.forEach(clientHandler -> clientHandler.sendResponseToClient(message));
-  }
+
 
   /**
    * This method should remove any disconnected clients.
@@ -183,10 +173,5 @@ public class GreenhouseSimulator {
    */
   public void removeDisconnectedClient(ClientHandler clientHandler) {
     connectedClients.remove(clientHandler);
-  }
-
-  public Actuator getActuator() {
-    //Implement this
-    return new Actuator("window", 1);
   }
 }

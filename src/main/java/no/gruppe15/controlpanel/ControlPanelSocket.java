@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import no.gruppe15.command.Command;
-import no.gruppe15.command.ToggleActuatorCommand;
 import no.gruppe15.greenhouse.Actuator;
-import no.gruppe15.message.MessageSerializer;
 import no.gruppe15.tools.Logger;
 
 /**
@@ -34,17 +31,20 @@ public class ControlPanelSocket implements CommunicationChannel {
 
   @Override
   public void sendActuatorChange(int nodeId, int actuatorId, boolean isOn) {
-    sendCommand(new ToggleActuatorCommand());
-    /*
-    Logger.info("Successfully selected actuator with id: " + actuatorId
+    Logger.info("Sending command to actuator " + actuatorId
         + " on node " + nodeId);
-     */
+    String on = isOn ? "1" : "0";
+    socketWriter.println(nodeId + ", " + actuatorId + ", " + on);
+    try {
+      Logger.info(socketReader.readLine());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
    * This method opens a new socket.
    *
-   * @return
    */
   @Override
   public boolean open() {
@@ -54,7 +54,7 @@ public class ControlPanelSocket implements CommunicationChannel {
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
       //Debug nodes
-      spawnNode("1;1_window");
+      spawnNode("1;2_window");
       spawnNode("2;2_window");
       spawnNode("3;1_heater");
       spawnNode("4;1_window");
@@ -76,24 +76,6 @@ public class ControlPanelSocket implements CommunicationChannel {
     } catch (IOException e) {
       Logger.error("Could not close connection: " + e.getMessage());
       return false;
-    }
-  }
-
-  public void sendCommand(Command command) {
-    if (socketWriter != null && socketReader != null) {
-      try {
-        socketWriter.println(MessageSerializer.toString(command));
-        System.out.println("Sending command: " + MessageSerializer.toString(command));
-        String serverResponse;
-        try {
-          serverResponse = socketReader.readLine();
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-        System.out.println("Server response: " + serverResponse);
-      } catch (Exception e) {
-        System.err.println("Could not send a command: " + e.getMessage());
-      }
     }
   }
 

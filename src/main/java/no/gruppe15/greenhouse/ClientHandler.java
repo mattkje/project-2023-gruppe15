@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import no.gruppe15.command.Command;
-import no.gruppe15.message.Message;
-import no.gruppe15.message.MessageSerializer;
 import no.gruppe15.tools.Logger;
 
 public class ClientHandler extends Thread {
@@ -39,9 +36,13 @@ public class ClientHandler extends Thread {
 
   @Override
   public void run() {
-    Message response;
-    while ((response = executeClientCommand()) != null) {
-      simulator.broadcastMessageToAllClients(response);
+    String rawCommand;
+    try {
+      while ((rawCommand = socketReader.readLine()) != null) {
+        processCommand(rawCommand);
+      }
+    } catch (IOException e) {
+      Logger.error("An error occurred while reading from the socket: "+ e.getMessage());
     }
 
     String clientAddress = socket.getRemoteSocketAddress().toString();
@@ -49,41 +50,23 @@ public class ClientHandler extends Thread {
     simulator.removeDisconnectedClient(this);
   }
 
-  private Message executeClientCommand() {
-    Command clientCommand = getClientCommand();
-    if (clientCommand == null) {
-      return null;
-    }
-
-    String commandName = clientCommand.getClass().getSimpleName();
-    Logger.info("Received a " + commandName + " from the client.");
-    return sendResponseToClient(clientCommand.execute(simulator.getActuator()));
+  private void processCommand(String rawCommand) {
+    handleRawCommand(rawCommand);
+    Logger.info("Recieved a command from client: " + rawCommand);
+    socketWriter.println("Sucessfully initiated actuator " + rawCommand);
   }
 
-  private Command getClientCommand() {
-    Message clientCommand = null;
-    try {
-      String rawClientRequest = socketReader.readLine();
-      clientCommand = MessageSerializer.fromString(rawClientRequest);
-      if (!(clientCommand instanceof Command)) {
-        if (clientCommand != null) {
-          Logger.error("Received an unexpected message from the client: " + clientCommand);
-        }
-        clientCommand = null;
-      }
-    } catch (IOException e) {
-      Logger.error("Failed to receive the client request: " + e.getMessage());
-    } catch (NullPointerException e1) {
-      Logger.info("The client has lost the connection");
+  private void handleRawCommand(String rawCommand) {
+    String[] parts = rawCommand.split(",");
+    if (parts.length == 3) {
+      int nodeId = Integer.parseInt(parts[0].trim());
+      int actuatorId = Integer.parseInt(parts[1].trim());
+      int on = Integer.parseInt(parts[2].trim());
+      boolean isOn = (on != 0);
+      simulator.handleActuator(actuatorId, nodeId, isOn);
+    } else {
+      Logger.error("Wrong format!");
     }
-
-    assert clientCommand instanceof Command : "Expected a Command but received: " + clientCommand;
-    return (Command) clientCommand;
-  }
-
-  public Message sendResponseToClient(Message message) {
-    socketWriter.println(message);
-    return message;
   }
 
 
