@@ -3,6 +3,7 @@ package no.gruppe15.gui.controlpanel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -69,6 +70,7 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
     stage.setMinHeight(HEIGHT);
     stage.setTitle("Control panel");
     mainScene = new Scene(createEmptyContent(), WIDTH, HEIGHT);
+    mainScene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("/no/gruppe15/css/main.css")).toExternalForm());
     stage.setScene(mainScene);
     stage.show();
     logic.addListener(this);

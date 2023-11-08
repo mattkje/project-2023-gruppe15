@@ -1,0 +1,340 @@
+* {
+    -fx-primary-color: #3edd9c;
+    -fx-secondary-color: #4baf86;
+    -fx-custom-color: financeColorString;
+
+    -fx-focus-color: -fx-secondary-color;
+}
+
+
+
+.label{
+    -fx-text-fill: #000000;
+}
+#menuBar{
+    -fx-background-color: #03fc96;
+}
+
+#accountName{
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
+
+}
+
+#accountInfo{
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
+
+}
+#savingsMonth{
+    -fx-background-color: #ffffff;
+}
+
+#savingsYear{
+    -fx-background-color: #ffffff;
+}
+
+#budgetGrid{
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 40px;
+    -fx-padding: 20px;
+    -fx-vgap: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
+
+}
+
+#darkModeButtonImage {
+    -fx-image: url('/no/stud/ntnu/gruppe5/Media/moon.png');
+}
+
+.text-field{
+    -fx-background-radius: 20px;
+    -fx-background-color: white;
+}
+
+.tab-header-area .tab-header-background {
+    -fx-background-color: -fx-primary-color;
+}
+.tab-pane .tab:selected {
+    -fx-background-color: -fx-secondary-color;
+    -fx-background-insets: 0 0 0 0;
+    -fx-background-radius: 0 0 0 0;
+}
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 0 10 0 10;
+}
+.tab-pane:top *.tab-header-area {
+    -fx-padding: 0 0 0 30;
+
+    /* NO SPACE LEFT OF FIRST TAB */
+    /* -fx-padding: 0 0 0 30; */
+}
+.tab-pane {
+    -fx-background-color: transparent;
+    -fx-tab-min-width: 100px;
+    -fx-tab-min-height: 33px;
+    -fx-tab-max-height: 33px;
+}
+.tab-pane .tab {
+    -fx-background-color: transparent;
+}
+.tab-pane:focused .tab-header-area .headers-region .tab:selected .focus-indicator {
+    -fx-border-width: 0;
+    -fx-border-insets: 0 0 0 0;
+    -fx-border-radius: 0;
+}
+
+.tool-bar{
+    -fx-background-color: #eeeaea;
+}
+
+#labelRow .label {
+    -fx-background-color: #D6D6D6;
+    -fx-background-radius: 40px;
+    -fx-padding: 6;
+}
+#labelRow2 .label {
+    -fx-background-color: #D6D6D6;
+    -fx-background-radius: 40px;
+    -fx-padding: 6;
+}
+#labelRow3 .label {
+    -fx-background-color: #D6D6D6;
+    -fx-background-radius: 40px;
+    -fx-padding: 6;
+}
+
+.stackedBarChart {
+    -fx-background-color: white;
+}
+
+
+.button {
+    -fx-display: inline-block;
+    -fx-padding: 5px 5px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-text-align: center;
+    -fx-text-decoration: none;
+    -fx-text-fill: #000000;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-border-radius: 25px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 0, 5, 0, 1);
+}
+
+.button:hover {
+    -fx-background-color: #b7b7b7;
+}
+
+.button:pressed {
+    -fx-background-color: #696969;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 0, 2, 0, 1);
+    -fx-translate-y: 2px;
+
+}
+.text-field {
+    -fx-opacity: 1;
+}
+.progress-bar {
+    -fx-accent: -fx-primary-color;
+}
+
+#calendarRectangle {
+    -fx-stroke: transparent;
+    -fx-fill: #ffffff;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
+
+}
+
+#todayRectangle {
+    -fx-stroke: transparent;
+    -fx-fill: #8defc5;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
+
+}
+
+#calendarText {
+    -fx-fill: BLACK;
+}
+#year{
+    -fx-fill: BLACK;
+}
+#month {
+    -fx-fill: BLACK;
+}
+
+#su {
+    -fx-fill: BLACK;
+}
+#mo {
+    -fx-fill: BLACK;
+}
+#tu {
+    -fx-fill: BLACK;
+}
+#we {
+    -fx-fill: BLACK;
+}
+#th {
+    -fx-fill: BLACK;
+}
+#fr {
+    -fx-fill: BLACK;
+}
+#sa {
+    -fx-fill: BLACK;
+}
+
+/* Optional: Set a default font for the entire application */
+.root {
+    -fx-font-family: Rajdhani;
+}
+
+
+/* TABLE */
+.table-view{
+    -fx-background-color: transparent;
+}
+
+.table-view:focused{
+    -fx-background-color: transparent;
+}
+
+
+.table-view .column-header-background{
+    -fx-background-color: #f1f1f1;
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: rgba(255, 255, 255, 0);
+    -fx-text-fill: #000000;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-text-fill: #000000;
+    -fx-font-family: "Segoe UI";
+}
+
+.table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, #eeeeee;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-border-color: #d0d0d0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.table-cell{
+    -fx-border-color: #ffffff;
+}
+
+.table-row-cell:odd{
+    -fx-background-color: -fx-table-cell-border-color, #ffffff;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #cecece;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+
+
+.table-view > .virtual-flow > .scroll-bar > .increment-button,
+.table-view > .virtual-flow > .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
+#upcomingActivityBox:selected{
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+
+#dateCol{
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold
+}
+
+#textCol{
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold
+}
+
+#titleCol{
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold
+}
+
+#upcomingActivityBox .table-cell {
+    -fx-border-color: transparent;
+}
+
+.table-row-cell, .table-cell {
+    -fx-border-width: 0;
+}
+
+.tool-bar{
+    -fx-background-color: #ffffff;
+}
+
+.context-menu {
+    -fx-font-size: 14px;
+    -fx-background-color: #F5F5F5;
+    -fx-padding: 10;
+    -fx-pref-width: 100;
+}
+
+.menu-item {
+    -fx-text-fill: #333333;
+}
+
+.context-menu .menu-item:focused {
+    -fx-background-color: #a1ffd0; /* Blue */
+}
+
+.context-menu .menu-item:selected {
+    -fx-background-color: #ffffff; /* Light Gray */
+}
+
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+}
+
+.table-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+.table-view .corner {
+    -fx-opacity: 0;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: #ffffff;
+}

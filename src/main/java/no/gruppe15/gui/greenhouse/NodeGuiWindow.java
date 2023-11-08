@@ -1,6 +1,7 @@
 package no.gruppe15.gui.greenhouse;
 
 import java.util.List;
+import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -34,6 +35,8 @@ public class NodeGuiWindow extends Stage implements SensorListener, ActuatorList
   public NodeGuiWindow(SensorActuatorNode node) {
     this.node = node;
     Scene scene = new Scene(createContent(), WINDOW_WIDTH, WINDOW_HEIGHT);
+    scene.getStylesheets().add(
+        Objects.requireNonNull(this.getClass().getResource("/no/gruppe15/css/main.css")).toExternalForm());
     setScene(scene);
     setTitle("Node " + node.getId());
     initializeListeners(node);

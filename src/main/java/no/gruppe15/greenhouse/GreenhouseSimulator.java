@@ -36,6 +36,8 @@ public class GreenhouseSimulator {
 
   /**
    * Initialise the greenhouse but don't start the simulation just yet.
+   * 
+   * TODO: Add more nodes, add function to add nodes inside the application??
    */
   public void initialize() {
     createNode(1, 2, 1, 0, 0);
