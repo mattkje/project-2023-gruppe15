@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import no.gruppe15.command.TurnOffCommand;
+import no.gruppe15.command.TurnOnCommand;
 import no.gruppe15.controlpanel.CommunicationChannel;
 import no.gruppe15.controlpanel.ControlPanelLogic;
 import no.gruppe15.controlpanel.FakeCommunicationChannel;
+import no.gruppe15.controlpanel.ControlPanelSocket;
 import no.gruppe15.gui.controlpanel.ControlPanelApplication;
 import no.gruppe15.tools.Logger;
 
@@ -18,11 +21,9 @@ import no.gruppe15.tools.Logger;
  * debugger (JavaFX modules not found)
  */
 public class ControlPanelStarter {
-  private static final String SERVER_HOST = "localhost";
+  public static final String SERVER_HOST = "localhost";
   private final boolean fake;
-  private Socket socket;
-  private InputStream inputStream;
-  private OutputStream outputStream;
+  private ControlPanelSocket controlPanelSocket;
 
   public ControlPanelStarter(boolean fake) {
     this.fake = fake;
@@ -64,20 +65,17 @@ public class ControlPanelStarter {
     return channel;
   }
 
+  /**
+   *  // TODO - here you initiate TCP/UDP socket communication
+   *     // You communication class(es) may want to get reference to the logic and call necessary
+   *     // logic methods when events happen (for example, when sensor data is received)
+   * @param logic
+   * @return
+   */
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
-    // TODO - here you initiate TCP/UDP socket communication
-    // You communication class(es) may want to get reference to the logic and call necessary
-    // logic methods when events happen (for example, when sensor data is received)
-    try {
-      socket = new Socket(SERVER_HOST, PORT_NUMBER);
-      inputStream = socket.getInputStream();
-      outputStream = socket.getOutputStream();
-      System.out.println("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
-    } catch (IOException e){
-      System.err.println("Could not connect to server: " + e.getMessage());
-    }
-
-    return initiateFakeSpawner(logic);
+    controlPanelSocket = new ControlPanelSocket(logic);
+    logic.setCommunicationChannel(controlPanelSocket);
+    return controlPanelSocket;
   }
 
   private CommunicationChannel initiateFakeSpawner(ControlPanelLogic logic) {
@@ -109,13 +107,6 @@ public class ControlPanelStarter {
 
   private void stopCommunication() {
     // TODO - here you stop the TCP/UDP socket communication
-    try {
-      socket.close();
-      inputStream.close();
-      outputStream.close();
-    } catch (IOException e){
-      System.err.println("Could not stop communication: " + e.getMessage());
-    }
-
+    controlPanelSocket.close();
   }
 }

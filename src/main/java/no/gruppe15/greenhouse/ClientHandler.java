@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import no.gruppe15.command.Command;
+import no.gruppe15.command.TurnOnCommand;
+import no.gruppe15.message.Message;
+import no.gruppe15.message.MessageSerializer;
+import no.gruppe15.tools.Logger;
 
 public class ClientHandler extends Thread {
   private final Socket socket;
@@ -32,24 +37,54 @@ public class ClientHandler extends Thread {
   /**
    * This method is responsible for handling client requests and executing commands.
    */
+
+  @Override
   public void run() {
-    String clientAddress = socket.getRemoteSocketAddress().toString();
-    try {
-      BufferedReader socketReader =
-          new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-      while (true) {
-        String line = socketReader.readLine();
-        if (line == null) {
-          break;
-        }
-      }
-
-      System.out.println("Client at " + clientAddress + " has disconnected.");
-    } catch (IOException e) {
-
-      System.err.println("Error with client at " + clientAddress + ": " + e.getMessage());
+    Message response;
+    while ((response = executeClientCommand()) != null) {
+      simulator.broadcastMessageToAllClients(response);
     }
+
+    String clientAddress = socket.getRemoteSocketAddress().toString();
+    System.out.println("Client at " + clientAddress + " has disconnected.");
+    simulator.removeDisconnectedClient(this);
+  }
+
+  private Message executeClientCommand() {
+    Command clientCommand = getClientCommand();
+    if (clientCommand == null) {
+      return null;
+    }
+
+    String commandName = clientCommand.getClass().getSimpleName();
+    Logger.info("Received a " + commandName + " from the client.");
+    return sendResponseToClient(clientCommand.execute("window", 1));
+  }
+
+  private Command getClientCommand() {
+    Message clientCommand = null;
+    try {
+      String rawClientRequest = socketReader.readLine();
+      clientCommand = MessageSerializer.fromString(rawClientRequest);
+      if (!(clientCommand instanceof Command)) {
+        if (clientCommand != null) {
+          Logger.error("Received an unexpected message from the client: " + clientCommand);
+        }
+        clientCommand = null;
+      }
+    } catch (IOException e) {
+      Logger.error("Failed to receive the client request: " + e.getMessage());
+    } catch (NullPointerException e1) {
+      Logger.info("The client has lost the connection");
+    }
+
+    assert clientCommand instanceof Command : "Expected a Command but received: " + clientCommand;
+    return (Command) clientCommand;
+  }
+
+  public Message sendResponseToClient(Message message) {
+    socketWriter.println(message);
+    return message;
   }
 
 

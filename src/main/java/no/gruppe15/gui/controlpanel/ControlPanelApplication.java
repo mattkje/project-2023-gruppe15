@@ -7,13 +7,16 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import no.gruppe15.command.TurnOffCommand;
 import no.gruppe15.controlpanel.CommunicationChannel;
 import no.gruppe15.controlpanel.ControlPanelLogic;
+import no.gruppe15.controlpanel.ControlPanelSocket;
 import no.gruppe15.controlpanel.SensorActuatorNodeInfo;
 import no.gruppe15.greenhouse.Actuator;
 import no.gruppe15.greenhouse.SensorReading;
@@ -179,6 +182,7 @@ public class ControlPanelApplication extends Application implements GreenhouseEv
   }
 
   private Tab createNodeTab(SensorActuatorNodeInfo nodeInfo) {
+
     Tab tab = new Tab("Node " + nodeInfo.getId());
     SensorPane sensorPane = createEmptySensorPane();
     sensorPanes.put(nodeInfo.getId(), sensorPane);
