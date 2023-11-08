@@ -28,23 +28,33 @@ public class ControlPanelSocket implements CommunicationChannel {
     this.logic = logic;
   }
 
-
+  /**
+   * This method should send a command to a specific actuator
+   *
+   * @param nodeId     ID of the node to which the actuator is attached
+   * @param actuatorId Node-wide unique ID of the actuator
+   * @param isOn       When true, actuator must be turned on; off when false.
+   */
   @Override
   public void sendActuatorChange(int nodeId, int actuatorId, boolean isOn) {
-    Logger.info("Sending command to actuator " + actuatorId
-        + " on node " + nodeId);
+    Logger.info("Sending command to actuator " + actuatorId + " on node " + nodeId);
     String on = isOn ? "1" : "0";
-    socketWriter.println(nodeId + ", " + actuatorId + ", " + on);
+    String command = nodeId + ", " + actuatorId + ", " + on;
+
     try {
-      Logger.info(socketReader.readLine());
+      socketWriter.println(command);
+      String response = socketReader.readLine();
+      Logger.info(response);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
+
   /**
-   * This method opens a new socket.
+   * Opens a TCP socket connection to the specified server.
    *
+   * @return true if the socket connection was successfully established, false otherwise.
    */
   @Override
   public boolean open() {
@@ -54,10 +64,14 @@ public class ControlPanelSocket implements CommunicationChannel {
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
       //Debug nodes
+      getNodes();
+      /*
       spawnNode("1;2_window");
       spawnNode("2;2_window");
       spawnNode("3;1_heater");
       spawnNode("4;1_window");
+       */
+
       return true;
     } catch (IOException e) {
       Logger.error("Could not connect to server: " + e.getMessage());
@@ -79,8 +93,37 @@ public class ControlPanelSocket implements CommunicationChannel {
     }
   }
 
+  /**
+   * This method should spawn nodes in the controlPanel.
+   * TODO: Remove this as it is just for debugging.
+   *
+   * @param spawn A node given as string
+   */
   public void spawnNode(String spawn) {
     logic.onNodeAdded(createSensorNodeInfoFrom(spawn));
+  }
+
+
+  /**
+   * This method should get all nodes from server, and add them to
+   * the controlPanel.
+   *
+   * TODO: implement this
+   */
+  public void getNodes() {
+    socketWriter.println("getNodes");
+    String nodes;
+    try {
+      nodes = socketReader.readLine();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    String[] nodeList = nodes.split("/");
+    for (String node : nodeList) {
+      System.out.println(node);
+      logic.onNodeAdded(createSensorNodeInfoFrom(node));
+    }
+
   }
 
   private void parseActuators(String actuatorSpecification, SensorActuatorNodeInfo info) {
@@ -106,7 +149,7 @@ public class ControlPanelSocket implements CommunicationChannel {
   }
 
   private SensorActuatorNodeInfo createSensorNodeInfoFrom(String specification) {
-    if (specification == null || specification.isEmpty()) {
+    if (specification.isEmpty()) {
       throw new IllegalArgumentException("Node specification can't be empty");
     }
     String[] parts = specification.split(";");

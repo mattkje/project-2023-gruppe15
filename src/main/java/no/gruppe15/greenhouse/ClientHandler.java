@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Map;
 import no.gruppe15.tools.Logger;
 
 public class ClientHandler extends Thread {
@@ -57,6 +58,10 @@ public class ClientHandler extends Thread {
   }
 
   private void handleRawCommand(String rawCommand) {
+    if (rawCommand.equals("getNodes")){
+      socketWriter.println(getNodesAsString());
+      return;
+    }
     String[] parts = rawCommand.split(",");
     if (parts.length == 3) {
       int nodeId = Integer.parseInt(parts[0].trim());
@@ -67,6 +72,16 @@ public class ClientHandler extends Thread {
     } else {
       Logger.error("Wrong format!");
     }
+  }
+
+  /**
+   * This method should return all nodes as a single String.
+   *
+   * @return All nodes as a string.
+   */
+  private String getNodesAsString() {
+    //TODO: Implement this.
+    return "1;1_window/2;2_fans 1_heater/3";
   }
 
 

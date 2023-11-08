@@ -114,6 +114,10 @@ public class GreenhouseSimulator {
     }
   }
 
+  public Map<Integer, SensorActuatorNode> getNodes(){
+    return nodes;
+  }
+
   /**
    * This method is used for debugging
    * //TODO: Should be deleted when done
