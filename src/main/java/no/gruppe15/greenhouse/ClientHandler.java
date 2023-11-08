@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import no.gruppe15.command.Command;
-import no.gruppe15.command.TurnOnCommand;
 import no.gruppe15.message.Message;
 import no.gruppe15.message.MessageSerializer;
 import no.gruppe15.tools.Logger;
@@ -58,7 +57,7 @@ public class ClientHandler extends Thread {
 
     String commandName = clientCommand.getClass().getSimpleName();
     Logger.info("Received a " + commandName + " from the client.");
-    return sendResponseToClient(clientCommand.execute("window", 1));
+    return sendResponseToClient(clientCommand.execute(simulator.getActuator()));
   }
 
   private Command getClientCommand() {

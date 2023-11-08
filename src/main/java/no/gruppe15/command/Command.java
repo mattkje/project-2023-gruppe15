@@ -13,6 +13,6 @@ public abstract class Command implements Message {
    *
    * @return The message which contains the output of the command
    */
-  public abstract Message execute(String actuatorType, int nodeId);
+  public abstract Message execute(Actuator actuator);
 }
 

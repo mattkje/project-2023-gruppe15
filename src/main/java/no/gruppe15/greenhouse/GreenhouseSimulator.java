@@ -105,6 +105,7 @@ public class GreenhouseSimulator {
     try {
       Socket clientSocket = listeningSocket.accept();
       Logger.info("New client connected from " + clientSocket.getRemoteSocketAddress());
+      importNodesFromServer();
       return new ClientHandler(clientSocket, this);
     } catch (IOException e) {
       Logger.error("Could not accept client connection: " + e.getMessage());
@@ -112,6 +113,9 @@ public class GreenhouseSimulator {
     }
   }
 
+  public void importNodesFromServer(){
+    //TODO implement this.
+  }
 
   /**
    * This method is used for debugging
@@ -181,4 +185,8 @@ public class GreenhouseSimulator {
     connectedClients.remove(clientHandler);
   }
 
+  public Actuator getActuator() {
+    //Implement this
+    return new Actuator("window", 1);
+  }
 }

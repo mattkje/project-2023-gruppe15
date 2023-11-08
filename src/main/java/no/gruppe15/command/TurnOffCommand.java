@@ -6,7 +6,7 @@ import no.gruppe15.message.Message;
 
 public class TurnOffCommand extends Command{
   @Override
-  public Message execute(String actuatorType, int nodeId) {
+  public Message execute(Actuator actuator) {
     return null;
   }
 }

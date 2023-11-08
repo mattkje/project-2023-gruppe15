@@ -1,13 +1,5 @@
 package no.gruppe15.run;
 
-import static no.gruppe15.greenhouse.GreenhouseSimulator.PORT_NUMBER;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import no.gruppe15.command.TurnOffCommand;
-import no.gruppe15.command.TurnOnCommand;
 import no.gruppe15.controlpanel.CommunicationChannel;
 import no.gruppe15.controlpanel.ControlPanelLogic;
 import no.gruppe15.controlpanel.FakeCommunicationChannel;

@@ -6,15 +6,11 @@ import static no.gruppe15.tools.Parser.parseIntegerOrError;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
 import no.gruppe15.command.Command;
-import no.gruppe15.command.TurnOnCommand;
+import no.gruppe15.command.ToggleActuatorCommand;
 import no.gruppe15.greenhouse.Actuator;
 import no.gruppe15.message.MessageSerializer;
 import no.gruppe15.tools.Logger;
@@ -38,9 +34,11 @@ public class ControlPanelSocket implements CommunicationChannel {
 
   @Override
   public void sendActuatorChange(int nodeId, int actuatorId, boolean isOn) {
-    sendCommand(new TurnOnCommand());
-    Logger.info("Successfully selected actuator with id" + actuatorId
+    sendCommand(new ToggleActuatorCommand());
+    /*
+    Logger.info("Successfully selected actuator with id: " + actuatorId
         + " on node " + nodeId);
+     */
   }
 
   /**
@@ -60,7 +58,6 @@ public class ControlPanelSocket implements CommunicationChannel {
       spawnNode("2;2_window");
       spawnNode("3;1_heater");
       spawnNode("4;1_window");
-      sendCommand(new TurnOnCommand());
       return true;
     } catch (IOException e) {
       Logger.error("Could not connect to server: " + e.getMessage());
