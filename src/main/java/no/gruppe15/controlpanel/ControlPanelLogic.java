@@ -1,8 +1,12 @@
 package no.gruppe15.controlpanel;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import no.gruppe15.greenhouse.Actuator;
+import no.gruppe15.greenhouse.Sensor;
 import no.gruppe15.greenhouse.SensorReading;
 import no.gruppe15.listeners.common.ActuatorListener;
 import no.gruppe15.listeners.common.CommunicationChannelListener;
@@ -25,6 +29,7 @@ public class ControlPanelLogic implements GreenhouseEventListener, ActuatorListe
 
   private CommunicationChannel communicationChannel;
   private CommunicationChannelListener communicationChannelListener;
+
 
   /**
    * Set the channel over which control commands will be sent to sensor/actuator nodes.

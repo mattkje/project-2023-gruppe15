@@ -88,16 +88,6 @@ public class SensorActuatorNode implements ActuatorListener, CommunicationChanne
   }
 
   /**
-   * Add an actuator to the node.
-   *
-   * @param actuatorList The actuator to add
-   */
-  public void setActuatorList(ActuatorCollection actuatorList) {
-    actuators = actuatorList;
-    Logger.info("Sucksess!!!");
-  }
-
-  /**
    * Register a new listener for sensor updates.
    *
    * @param listener The listener which will get notified every time sensor values change.

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import no.gruppe15.listeners.greenhouse.NodeStateListener;
 import no.gruppe15.tools.Logger;
@@ -37,7 +39,6 @@ public class GreenhouseSimulator {
 
   /**
    * Initialise the greenhouse but don't start the simulation just yet.
-   * 
    * TODO: Add more nodes, add function to add nodes inside the application??
    */
   public void initialize() {
@@ -83,7 +84,6 @@ public class GreenhouseSimulator {
 
   /**
    * Sets up the TCP communication
-   *
    */
   private void initiateRealCommunication() {
     try {
@@ -116,13 +116,6 @@ public class GreenhouseSimulator {
   }
 
   public void handleActuator(int actuatorId, int nodeId, boolean isOn){
-    System.out.println(nodeId + "------DEBUG------" + actuatorId);
-    for (SensorActuatorNode node : nodes.values()) {
-      for (Actuator actuator : node.getActuators()) {
-        System.out.println(actuator.getId());
-      }
-    }
-
     if (!isOn){
       nodes.get(nodeId).getActuators().get(actuatorId).turnOn();
     } else {
@@ -133,20 +126,17 @@ public class GreenhouseSimulator {
   public String getNodes() {
     Map<Integer, List<Actuator>> actuatorsByNode = new HashMap<>();
 
-    // Group actuators by node ID
     for (SensorActuatorNode node : nodes.values()) {
       for (Actuator actuator : node.getActuators()) {
         actuatorsByNode.computeIfAbsent(actuator.getNodeId(), k -> new ArrayList<>()).add(actuator);
       }
     }
 
-    // Create the command string
     List<String> commands = new ArrayList<>();
     for (Map.Entry<Integer, List<Actuator>> entry : actuatorsByNode.entrySet()) {
       int nId = entry.getKey();
       List<Actuator> actuators = entry.getValue();
 
-      // Create a string for each node
       String actuatorString = actuators.stream()
           .map(a -> a.getId() + "_" + a.getType())
           .collect(Collectors.joining(" "));
@@ -158,9 +148,37 @@ public class GreenhouseSimulator {
     return String.join("/", commands);
   }
 
+  /**
+   * Updates all sensors and generates commands for each sensor node.
+   * Work in progress.
+   *
+   * @return A string containing commands for sensor nodes.
+   */
+  public String updateSensors() {
+    Map<Integer, List<Sensor>> sensorsByNode = new HashMap<>();
 
+    for (SensorActuatorNode node : nodes.values()) {
+      for (Sensor sensor : node.getSensors()) {
+        sensorsByNode.computeIfAbsent(node.getId(), k -> new ArrayList<>()).add(sensor);
+      }
+    }
 
+    List<String> commands = new ArrayList<>();
 
+    for (Map.Entry<Integer, List<Sensor>> entry : sensorsByNode.entrySet()) {
+      int nodeId = entry.getKey();
+      List<Sensor> sensors = entry.getValue();
+
+      String actuatorString = sensors.stream()
+          .map(sensor -> String.valueOf(sensor.getReading()))
+          .collect(Collectors.joining(" "));
+
+      String commandString = nodeId + ";" + actuatorString;
+      commands.add(commandString);
+    }
+
+    return String.join("/", commands);
+  }
 
   /**
    * This method is used for debugging
