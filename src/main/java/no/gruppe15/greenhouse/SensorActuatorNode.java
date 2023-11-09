@@ -20,7 +20,7 @@ public class SensorActuatorNode implements ActuatorListener, CommunicationChanne
   private final int id;
 
   private final List<Sensor> sensors = new LinkedList<>();
-  private final ActuatorCollection actuators = new ActuatorCollection();
+  private ActuatorCollection actuators = new ActuatorCollection();
 
   private final List<SensorListener> sensorListeners = new LinkedList<>();
   private final List<ActuatorListener> actuatorListeners = new LinkedList<>();
@@ -85,6 +85,16 @@ public class SensorActuatorNode implements ActuatorListener, CommunicationChanne
     actuator.setListener(this);
     actuators.add(actuator);
     Logger.info("Created " + actuator.getType() + "[" + actuator.getId() + "] on node " + id);
+  }
+
+  /**
+   * Add an actuator to the node.
+   *
+   * @param actuatorList The actuator to add
+   */
+  public void setActuatorList(ActuatorCollection actuatorList) {
+    actuators = actuatorList;
+    Logger.info("Sucksess!!!");
   }
 
   /**

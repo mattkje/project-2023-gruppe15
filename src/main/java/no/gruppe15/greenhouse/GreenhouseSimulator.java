@@ -116,8 +116,17 @@ public class GreenhouseSimulator {
   }
 
   public void handleActuator(int actuatorId, int nodeId, boolean isOn){
+    System.out.println(nodeId + "------DEBUG------" + actuatorId);
+    for (SensorActuatorNode node : nodes.values()) {
+      for (Actuator actuator : node.getActuators()) {
+        System.out.println(actuator.getId());
+      }
+    }
+
     if (!isOn){
       nodes.get(nodeId).getActuators().get(actuatorId).turnOn();
+    } else {
+      nodes.get(nodeId).getActuators().get(actuatorId).turnOff();
     }
   }
 
@@ -139,7 +148,7 @@ public class GreenhouseSimulator {
 
       // Create a string for each node
       String actuatorString = actuators.stream()
-          .map(a -> 1 + "_" + a.getType())
+          .map(a -> a.getId() + "_" + a.getType())
           .collect(Collectors.joining(" "));
 
       String commandString = nId + ";" + actuatorString;

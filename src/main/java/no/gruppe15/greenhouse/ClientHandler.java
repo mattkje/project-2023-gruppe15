@@ -38,8 +38,10 @@ public class ClientHandler extends Thread {
   @Override
   public void run() {
     String rawCommand;
+
     try {
       while ((rawCommand = socketReader.readLine()) != null) {
+        System.out.println(rawCommand);
         processCommand(rawCommand);
       }
     } catch (IOException e) {

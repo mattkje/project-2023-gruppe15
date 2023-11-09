@@ -2,6 +2,7 @@ package no.gruppe15.controlpanel;
 
 import no.gruppe15.greenhouse.Actuator;
 import no.gruppe15.greenhouse.ActuatorCollection;
+import no.gruppe15.tools.Logger;
 
 /**
  * Contains information about one sensor/actuator node. This is NOT the node itself, rather
@@ -10,7 +11,7 @@ import no.gruppe15.greenhouse.ActuatorCollection;
 public class SensorActuatorNodeInfo {
 
   private final int nodeId;
-  private final ActuatorCollection actuators = new ActuatorCollection();
+  private ActuatorCollection actuators = new ActuatorCollection();
 
   public SensorActuatorNodeInfo(int nodeId) {
     this.nodeId = nodeId;
@@ -18,6 +19,10 @@ public class SensorActuatorNodeInfo {
 
   public void addActuator(Actuator actuator) {
     actuators.add(actuator);
+  }
+
+  public void setActuatorList(ActuatorCollection actuatorList) {
+    actuators = actuatorList;
   }
 
   /**

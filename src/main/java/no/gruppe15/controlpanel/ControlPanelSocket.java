@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import no.gruppe15.greenhouse.Actuator;
+import no.gruppe15.greenhouse.ActuatorCollection;
 import no.gruppe15.tools.Logger;
 
 /**
@@ -36,10 +39,10 @@ public class ControlPanelSocket implements CommunicationChannel {
    * @param isOn       When true, actuator must be turned on; off when false.
    */
   @Override
-  public void sendActuatorChange(int nodeId, int actuatorId, boolean isOn) {
-    Logger.info("Sending command to actuator " + actuatorId + " on node " + nodeId);
+  public void sendActuatorChange(int actuatorId, int nodeId, boolean isOn) {
+    Logger.info("Sending command to actuator " + nodeId + " on node " + actuatorId);
     String on = isOn ? "0" : "1";
-    String command = nodeId + ", " + actuatorId + ", " + on;
+    String command = actuatorId + ", " + nodeId + ", " + on;
 
     try {
       socketWriter.println(command);
@@ -115,32 +118,34 @@ public class ControlPanelSocket implements CommunicationChannel {
     }
     String[] nodeList = nodes.split("/");
     for (String node : nodeList) {
-      System.out.println(node);
       logic.onNodeAdded(createSensorNodeInfoFrom(node));
     }
 
   }
 
-  private void parseActuators(String actuatorSpecification, SensorActuatorNodeInfo info) {
+  private ActuatorCollection parseActuators(String actuatorSpecification, int info) {
     String[] parts = actuatorSpecification.split(" ");
+    ActuatorCollection actuatorList = new ActuatorCollection();
     for (String part : parts) {
-      parseActuatorInfo(part, info);
+      actuatorList.add(parseActuatorInfo(part, info));
     }
+
+
+    return actuatorList;
   }
 
-  private void parseActuatorInfo(String s, SensorActuatorNodeInfo info) {
+  private Actuator parseActuatorInfo(String s, int info) {
     String[] actuatorInfo = s.split("_");
     if (actuatorInfo.length != 2) {
       throw new IllegalArgumentException("Invalid actuator info format: " + s);
     }
-    int actuatorCount = parseIntegerOrError(actuatorInfo[0],
+    int actuatorId = parseIntegerOrError(actuatorInfo[0],
         "Invalid actuator count: " + actuatorInfo[0]);
     String actuatorType = actuatorInfo[1];
-    for (int i = 0; i < actuatorCount; ++i) {
-      Actuator actuator = new Actuator(actuatorType, info.getId());
-      actuator.setListener(logic);
-      info.addActuator(actuator);
-    }
+    Actuator actuator = new Actuator(actuatorId, actuatorType, info);
+    //System.out.println(actuator.getId()+"-----------------"+actuator.getType()+"-----------------"+actuator.getNodeId());
+    actuator.setListener(logic);
+    return actuator;
   }
 
   private SensorActuatorNodeInfo createSensorNodeInfoFrom(String specification) {
@@ -148,13 +153,14 @@ public class ControlPanelSocket implements CommunicationChannel {
       throw new IllegalArgumentException("Node specification can't be empty");
     }
     String[] parts = specification.split(";");
-    if (parts.length > 3) {
+    if (parts.length > 2) {
       throw new IllegalArgumentException("Incorrect specification format");
     }
     int nodeId = parseIntegerOrError(parts[0], "Invalid node ID:" + parts[0]);
     SensorActuatorNodeInfo info = new SensorActuatorNodeInfo(nodeId);
     if (parts.length == 2) {
-      parseActuators(parts[1], info);
+      ActuatorCollection actuatorList = parseActuators(parts[1], info.getId());
+      info.setActuatorList(actuatorList);
     }
     return info;
   }
