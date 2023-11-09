@@ -59,7 +59,7 @@ public class ClientHandler extends Thread {
 
   private void handleRawCommand(String rawCommand) {
     if (rawCommand.equals("getNodes")){
-      socketWriter.println(getNodesAsString());
+      socketWriter.println(simulator.getNodes());
       return;
     }
     String[] parts = rawCommand.split(",");
@@ -73,16 +73,5 @@ public class ClientHandler extends Thread {
       Logger.error("Wrong format!");
     }
   }
-
-  /**
-   * This method should return all nodes as a single String.
-   *
-   * @return All nodes as a string.
-   */
-  private String getNodesAsString() {
-    //TODO: Implement this.
-    return "1;1_window/2;2_fans 1_heater/3";
-  }
-
 
 }

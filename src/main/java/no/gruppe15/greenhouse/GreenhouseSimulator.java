@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import no.gruppe15.listeners.greenhouse.NodeStateListener;
 import no.gruppe15.tools.Logger;
 
@@ -43,6 +44,10 @@ public class GreenhouseSimulator {
     createNode(1, 2, 1, 0, 0);
     createNode(1, 0, 0, 2, 1);
     createNode(2, 0, 0, 0, 0);
+    createNode(2, 0, 0, 1, 0);
+    createNode(2, 0, 0, 0, 1);
+    createNode(2, 0, 0, 1, 1);
+
     Logger.info("Greenhouse initialized");
   }
 
@@ -116,9 +121,37 @@ public class GreenhouseSimulator {
     }
   }
 
-  public Map<Integer, SensorActuatorNode> getNodes(){
-    return nodes;
+  public String getNodes() {
+    Map<Integer, List<Actuator>> actuatorsByNode = new HashMap<>();
+
+    // Group actuators by node ID
+    for (SensorActuatorNode node : nodes.values()) {
+      for (Actuator actuator : node.getActuators()) {
+        actuatorsByNode.computeIfAbsent(actuator.getNodeId(), k -> new ArrayList<>()).add(actuator);
+      }
+    }
+
+    // Create the command string
+    List<String> commands = new ArrayList<>();
+    for (Map.Entry<Integer, List<Actuator>> entry : actuatorsByNode.entrySet()) {
+      int nId = entry.getKey();
+      List<Actuator> actuators = entry.getValue();
+
+      // Create a string for each node
+      String actuatorString = actuators.stream()
+          .map(a -> 1 + "_" + a.getType())
+          .collect(Collectors.joining(" "));
+
+      String commandString = nId + ";" + actuatorString;
+      commands.add(commandString);
+    }
+
+    return String.join("/", commands);
   }
+
+
+
+
 
   /**
    * This method is used for debugging

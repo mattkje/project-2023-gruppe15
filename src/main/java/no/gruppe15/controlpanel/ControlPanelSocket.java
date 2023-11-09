@@ -38,7 +38,7 @@ public class ControlPanelSocket implements CommunicationChannel {
   @Override
   public void sendActuatorChange(int nodeId, int actuatorId, boolean isOn) {
     Logger.info("Sending command to actuator " + actuatorId + " on node " + nodeId);
-    String on = isOn ? "1" : "0";
+    String on = isOn ? "0" : "1";
     String command = nodeId + ", " + actuatorId + ", " + on;
 
     try {
@@ -65,12 +65,7 @@ public class ControlPanelSocket implements CommunicationChannel {
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
       //Debug nodes
       getNodes();
-      /*
-      spawnNode("1;2_window");
-      spawnNode("2;2_window");
-      spawnNode("3;1_heater");
-      spawnNode("4;1_window");
-       */
+
 
       return true;
     } catch (IOException e) {
