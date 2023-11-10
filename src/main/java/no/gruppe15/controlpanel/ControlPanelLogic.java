@@ -56,6 +56,7 @@ public class ControlPanelLogic implements GreenhouseEventListener, ActuatorListe
         onSensorData(nodeId, sensors);
       }
     }, 1000);
+
   }
 
   private List<SensorReading> parseSensors(String sensorInfo) {

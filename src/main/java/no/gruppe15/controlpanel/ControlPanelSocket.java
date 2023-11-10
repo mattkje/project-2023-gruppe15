@@ -46,6 +46,7 @@ public class ControlPanelSocket implements CommunicationChannel {
     String on = isOn ? "0" : "1";
     String command = actuatorId + ", " + nodeId + ", " + on;
 
+    updateSensorData();
     try {
       socketWriter.println(command);
       String response = socketReader.readLine();
@@ -117,6 +118,20 @@ public class ControlPanelSocket implements CommunicationChannel {
     }
     logic.sensorStringSplitter(sensors);
     Logger.info("Nodes loaded");
+  }
+
+  /**
+   * This method should update the sensors continually.
+   */
+  public void updateSensorData(){
+    socketWriter.println("updateSensor");
+    String sensors;
+    try {
+      sensors = socketReader.readLine();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    logic.sensorStringSplitter(sensors);
   }
 
 }

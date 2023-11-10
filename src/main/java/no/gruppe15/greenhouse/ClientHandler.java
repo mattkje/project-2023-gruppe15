@@ -75,6 +75,8 @@ public class ClientHandler extends Thread {
     if (rawCommand.equals("getNodes")) {
       handleGetNodesCommand();
       handleUpdateSensorCommand();
+    } if (rawCommand.equals("updateSensor")){
+      handleUpdateSensorCommand();
     } else {
       processActuatorCommand(rawCommand);
     }

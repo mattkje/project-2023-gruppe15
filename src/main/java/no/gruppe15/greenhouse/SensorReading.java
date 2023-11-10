@@ -39,6 +39,9 @@ public class SensorReading {
     this.value = newValue;
   }
 
+  /**
+   * TODO:Fix dis yes (formatting)
+   */
   @Override
   public String toString() {
     return "{ type=" + type + ", value=" + value + ", unit=" + unit + " }";

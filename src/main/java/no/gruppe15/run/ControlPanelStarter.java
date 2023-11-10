@@ -98,7 +98,6 @@ public class ControlPanelStarter {
   }
 
   private void stopCommunication() {
-    // TODO - here you stop the TCP/UDP socket communication
     controlPanelSocket.close();
   }
 }

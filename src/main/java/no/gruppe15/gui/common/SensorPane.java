@@ -93,7 +93,6 @@ public class SensorPane extends TitledPane {
       SimpleStringProperty props = sensorProps.get(index);
       Platform.runLater(() -> props.set(generateSensorText(sensor)));
     } else {
-      Logger.info("Adding sensor[" + index + "]");
       Platform.runLater(() -> contentBox.getChildren().add(createAndRememberSensorLabel(sensor)));
     }
   }
