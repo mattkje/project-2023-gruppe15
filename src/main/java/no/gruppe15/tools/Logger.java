@@ -38,4 +38,14 @@ public class Logger {
   public static void error(String message) {
     System.err.println(message);
   }
+
+  /**
+   * Log an information message in cursive.
+   *
+   * @param message The message to log. A newline is appended automatically.
+   */
+  public static void help(String message) {
+    System.out.println("\033[3m" + message + "\033[0m");
+  }
+
 }

@@ -4,9 +4,13 @@ import static no.gruppe15.greenhouse.GreenhouseSimulator.PORT_NUMBER;
 import static no.gruppe15.run.ControlPanelStarter.SERVER_HOST;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
+import javafx.scene.Scene;
+import no.gruppe15.gui.controlpanel.CommandLineControlPanel;
 import no.gruppe15.tools.Logger;
 
 /**
@@ -70,13 +74,20 @@ public class ControlPanelSocket implements CommunicationChannel {
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
       getNodes();
-
+      Scanner input = new Scanner(System.in);
+      Thread commandThread = new Thread(() -> startCommandControl(input));
+      commandThread.start();
       isConnected = true;
       return true;
     } catch (IOException e) {
       Logger.error("Could not connect to server: " + e.getMessage());
       return false;
     }
+  }
+
+  private void startCommandControl(Scanner input) {
+    CommandLineControlPanel controlPanel = new CommandLineControlPanel(this);
+    controlPanel.startCommandControl(input);
   }
 
   /**
