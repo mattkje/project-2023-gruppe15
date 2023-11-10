@@ -178,14 +178,13 @@ public class GreenhouseSimulator {
     }
 
     System.out.println(formatSensorCommand(String.join("/", commands)));
-    //return formatSensorCommand(String.join("/", commands));
-    return "4;temperature=27.4 °C,temperature=26.8 °C,humidity=80 %";
+    return formatSensorCommand(String.join("/", commands));
   }
 
   public String formatSensorCommand(String command){
     return command.replace("{", "").replace("}", "")
-        .replace(",", "")
-        .replace("type=","").replace("value=", "")
+        .replace(",", "").replace("   ", ",")
+        .replace("type=","").replace(" value", "")
         .replace("unit=", "").replace("; ", ";");
   }
 

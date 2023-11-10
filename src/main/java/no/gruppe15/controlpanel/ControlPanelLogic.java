@@ -3,16 +3,12 @@ package no.gruppe15.controlpanel;
 import static no.gruppe15.tools.Parser.parseDoubleOrError;
 import static no.gruppe15.tools.Parser.parseIntegerOrError;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import no.gruppe15.greenhouse.Actuator;
 import no.gruppe15.greenhouse.ActuatorCollection;
-import no.gruppe15.greenhouse.Sensor;
 import no.gruppe15.greenhouse.SensorReading;
 import no.gruppe15.listeners.common.ActuatorListener;
 import no.gruppe15.listeners.common.CommunicationChannelListener;
@@ -37,7 +33,7 @@ public class ControlPanelLogic implements GreenhouseEventListener, ActuatorListe
   private CommunicationChannelListener communicationChannelListener;
 
   public void sensorStringSplitter(String specification) {
-    String[] parts = specification.split("/");
+    String[] parts = specification.split(" /");
     for (int i = 0; i < parts.length; i++) {
       updateSensors(parts[i]);
     }
@@ -53,7 +49,13 @@ public class ControlPanelLogic implements GreenhouseEventListener, ActuatorListe
     }
     int nodeId = parseIntegerOrError(parts[0], "Invalid node ID:" + parts[0]);
     List<SensorReading> sensors = parseSensors(parts[1]);
-    onSensorData(nodeId, sensors);
+    Timer timer = new Timer();
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        onSensorData(nodeId, sensors);
+      }
+    }, 1000);
   }
 
   private List<SensorReading> parseSensors(String sensorInfo) {

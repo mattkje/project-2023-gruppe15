@@ -113,8 +113,9 @@ public class ControlPanelSocket implements CommunicationChannel {
     String[] nodeList = nodes.split("/");
     for (String node : nodeList) {
       logic.onNodeAdded(logic.createSensorNodeInfoFrom(node));
-      logic.sensorStringSplitter(sensors);
+
     }
+    logic.sensorStringSplitter(sensors);
     Logger.info("Nodes loaded");
   }
 
