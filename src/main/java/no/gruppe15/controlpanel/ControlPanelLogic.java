@@ -1,11 +1,17 @@
 package no.gruppe15.controlpanel;
 
+import static no.gruppe15.tools.Parser.parseDoubleOrError;
+import static no.gruppe15.tools.Parser.parseIntegerOrError;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import no.gruppe15.greenhouse.Actuator;
+import no.gruppe15.greenhouse.ActuatorCollection;
 import no.gruppe15.greenhouse.Sensor;
 import no.gruppe15.greenhouse.SensorReading;
 import no.gruppe15.listeners.common.ActuatorListener;
@@ -30,6 +36,108 @@ public class ControlPanelLogic implements GreenhouseEventListener, ActuatorListe
   private CommunicationChannel communicationChannel;
   private CommunicationChannelListener communicationChannelListener;
 
+  public void sensorStringSplitter(String specification) {
+    String[] parts = specification.split("/");
+    for (int i = 0; i < parts.length; i++) {
+      updateSensors(parts[i]);
+    }
+  }
+
+  public void updateSensors(String specification) {
+    if (specification == null || specification.isEmpty()) {
+      throw new IllegalArgumentException("Sensor specification can't be empty");
+    }
+    String[] parts = specification.split(";");
+    if (parts.length != 2) {
+      throw new IllegalArgumentException("Incorrect specification format: " + specification);
+    }
+    int nodeId = parseIntegerOrError(parts[0], "Invalid node ID:" + parts[0]);
+    List<SensorReading> sensors = parseSensors(parts[1]);
+    onSensorData(nodeId, sensors);
+  }
+
+  private List<SensorReading> parseSensors(String sensorInfo) {
+    List<SensorReading> readings = new LinkedList<>();
+    String[] readingInfo = sensorInfo.split(",");
+    for (String reading : readingInfo) {
+      readings.add(parseReading(reading));
+    }
+    return readings;
+  }
+
+  private SensorReading parseReading(String reading) {
+    String[] assignmentParts = reading.split("=");
+    if (assignmentParts.length != 2) {
+      throw new IllegalArgumentException("Invalid sensor reading specified: " + reading);
+    }
+    String[] valueParts = assignmentParts[1].split(" ");
+    if (valueParts.length != 2) {
+      throw new IllegalArgumentException("Invalid sensor value/unit: " + reading);
+    }
+    String sensorType = assignmentParts[0];
+    double value = parseDoubleOrError(valueParts[0], "Invalid sensor value: " + valueParts[0]);
+    String unit = valueParts[1];
+    return new SensorReading(sensorType, value, unit);
+  }
+
+  /**
+   * This method should create a collection of Actuators from a String.
+   *
+   * @param actuatorSpecification A collection of actuators as String.
+   * @param info                  Current nodeId.
+   * @return A collection of actuators.
+   */
+  private ActuatorCollection parseActuators(String actuatorSpecification, int info) {
+    String[] parts = actuatorSpecification.split(" ");
+    ActuatorCollection actuatorList = new ActuatorCollection();
+    for (String part : parts) {
+      actuatorList.add(parseActuatorInfo(part, info));
+    }
+    return actuatorList;
+  }
+
+  /**
+   * This method should create an actuator object from a string and assigning it a nodeId.
+   *
+   * @param s    An actuator as String.
+   * @param info Current nodeId.
+   * @return An actuator object.
+   */
+  private Actuator parseActuatorInfo(String s, int info) {
+    String[] actuatorInfo = s.split("_");
+    if (actuatorInfo.length != 2) {
+      throw new IllegalArgumentException("Invalid actuator info format: " + s);
+    }
+    int actuatorId = parseIntegerOrError(actuatorInfo[0],
+        "Invalid actuator count: " + actuatorInfo[0]);
+    String actuatorType = actuatorInfo[1];
+    Actuator actuator = new Actuator(actuatorId, actuatorType, info);
+    actuator.setListener(this);
+    return actuator;
+  }
+
+  /**
+   * This method should create a SensorActuatorNodeInfo object and populate it with actuators.
+   *
+   * @param specification Current server configuration as a String.
+   * @return A populated SensorActuatorNodeInfo object
+   */
+  public SensorActuatorNodeInfo createSensorNodeInfoFrom(String specification) {
+    if (specification.isEmpty()) {
+      throw new IllegalArgumentException("Node specification can't be empty");
+    }
+    String[] parts = specification.split(";");
+    if (parts.length > 2) {
+      throw new IllegalArgumentException("Incorrect specification format");
+    }
+    int nodeId = parseIntegerOrError(parts[0], "Invalid node ID:" + parts[0]);
+    SensorActuatorNodeInfo info = new SensorActuatorNodeInfo(nodeId);
+    if (parts.length == 2) {
+      ActuatorCollection actuatorList = parseActuators(parts[1], info.getId());
+      info.setActuatorList(actuatorList);
+    }
+    return info;
+  }
 
   /**
    * Set the channel over which control commands will be sent to sensor/actuator nodes.
