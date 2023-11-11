@@ -1,14 +1,21 @@
 package no.gruppe15.gui.controlpanel;
 
+import java.util.List;
 import java.util.Scanner;
+import javafx.application.Platform;
+import no.gruppe15.controlpanel.CommunicationChannel;
+import no.gruppe15.controlpanel.ControlPanelLogic;
 import no.gruppe15.controlpanel.ControlPanelSocket;
+import no.gruppe15.controlpanel.SensorActuatorNodeInfo;
+import no.gruppe15.greenhouse.SensorReading;
 import no.gruppe15.tools.Logger;
 
 public class CommandLineControlPanel {
 
   private ControlPanelSocket socket;
 
-  public CommandLineControlPanel(ControlPanelSocket socket){
+
+  public CommandLineControlPanel(ControlPanelSocket socket) {
     this.socket = socket;
   }
 
@@ -23,7 +30,12 @@ public class CommandLineControlPanel {
       if ("select".equals(command)) {
         handleSelectCommand(parts, input);
       } else if ("list".equals(command)) {
-        handleListCommand(input);
+        handleListCommand(parts, input);
+      } else if ("exit".equals(command)){
+        Logger.info("Exiting...");
+        socket.close();
+        Platform.exit();
+        return;
       } else {
         Logger.info("Invalid command");
         Logger.help("Available commands");
@@ -63,7 +75,9 @@ public class CommandLineControlPanel {
     startCommandControl(input);
   }
 
-  private void handleListCommand(Scanner input) {
+  private void handleListCommand(String[] parts, Scanner input) {
+    String nodeId = parts[1];
+    Logger.info("All actuators for node " + nodeId);
     // Implement logic for the 'list' command to list all nodes
     // ...
     Logger.info("List command not implemented yet");

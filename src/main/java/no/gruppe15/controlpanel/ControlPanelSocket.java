@@ -74,15 +74,19 @@ public class ControlPanelSocket implements CommunicationChannel {
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
       getNodes();
-      Scanner input = new Scanner(System.in);
-      Thread commandThread = new Thread(() -> startCommandControl(input));
-      commandThread.start();
       isConnected = true;
       return true;
     } catch (IOException e) {
       Logger.error("Could not connect to server: " + e.getMessage());
       return false;
     }
+  }
+
+  public void openCommandLine(){
+    open();
+    Scanner input = new Scanner(System.in);
+    Thread commandThread = new Thread(() -> startCommandControl(input));
+    commandThread.start();
   }
 
   private void startCommandControl(Scanner input) {
