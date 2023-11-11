@@ -4,12 +4,12 @@ import static no.gruppe15.greenhouse.GreenhouseSimulator.PORT_NUMBER;
 import static no.gruppe15.run.ControlPanelStarter.SERVER_HOST;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-import javafx.scene.Scene;
+import java.util.Timer;
+import java.util.TimerTask;
 import no.gruppe15.gui.controlpanel.CommandLineControlPanel;
 import no.gruppe15.tools.Logger;
 
@@ -50,7 +50,6 @@ public class ControlPanelSocket implements CommunicationChannel {
     String on = isOn ? "0" : "1";
     String command = actuatorId + ", " + nodeId + ", " + on;
 
-    updateSensorData();
     try {
       socketWriter.println(command);
       String response = socketReader.readLine();
@@ -73,6 +72,7 @@ public class ControlPanelSocket implements CommunicationChannel {
       socketWriter = new PrintWriter(socket.getOutputStream(), true);
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
+      continuousSensorUpdate();
       getNodes();
       isConnected = true;
       return true;
@@ -129,9 +129,7 @@ public class ControlPanelSocket implements CommunicationChannel {
     String[] nodeList = nodes.split("/");
     for (String node : nodeList) {
       logic.onNodeAdded(logic.createSensorNodeInfoFrom(node));
-
     }
-    logic.sensorStringSplitter(sensors);
     Logger.info("Nodes loaded");
   }
 
@@ -147,6 +145,19 @@ public class ControlPanelSocket implements CommunicationChannel {
       throw new RuntimeException(e);
     }
     logic.sensorStringSplitter(sensors);
+  }
+
+  /**
+   * This method sends requests to the server for sensor updates every 2 seconds.
+   */
+  public void continuousSensorUpdate() {
+    Timer timer = new Timer();
+    timer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        updateSensorData();
+      }
+    }, 0, 2000);
   }
 
 }

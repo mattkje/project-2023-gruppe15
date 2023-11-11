@@ -1,6 +1,6 @@
 * {
-    -fx-primary-color: #3edd9c;
-    -fx-secondary-color: #4baf86;
+    -fx-primary-color: #3639d7;
+    -fx-secondary-color: #0068de;
     -fx-custom-color: financeColorString;
 
     -fx-focus-color: -fx-secondary-color;
@@ -10,43 +10,6 @@
 
 .label{
     -fx-text-fill: #000000;
-}
-#menuBar{
-    -fx-background-color: #03fc96;
-}
-
-#accountName{
-    -fx-background-color: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
-
-}
-
-#accountInfo{
-    -fx-background-color: #ffffff;
-    -fx-padding: 20px;
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
-
-}
-#savingsMonth{
-    -fx-background-color: #ffffff;
-}
-
-#savingsYear{
-    -fx-background-color: #ffffff;
-}
-
-#budgetGrid{
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 40px;
-    -fx-padding: 20px;
-    -fx-vgap: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
-
-}
-
-#darkModeButtonImage {
-    -fx-image: url('/no/stud/ntnu/gruppe5/Media/moon.png');
 }
 
 .text-field{
@@ -93,22 +56,6 @@
     -fx-background-color: #eeeaea;
 }
 
-#labelRow .label {
-    -fx-background-color: #D6D6D6;
-    -fx-background-radius: 40px;
-    -fx-padding: 6;
-}
-#labelRow2 .label {
-    -fx-background-color: #D6D6D6;
-    -fx-background-radius: 40px;
-    -fx-padding: 6;
-}
-#labelRow3 .label {
-    -fx-background-color: #D6D6D6;
-    -fx-background-radius: 40px;
-    -fx-padding: 6;
-}
-
 .stackedBarChart {
     -fx-background-color: white;
 }
@@ -145,53 +92,6 @@
     -fx-accent: -fx-primary-color;
 }
 
-#calendarRectangle {
-    -fx-stroke: transparent;
-    -fx-fill: #ffffff;
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
-
-}
-
-#todayRectangle {
-    -fx-stroke: transparent;
-    -fx-fill: #8defc5;
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.126), 0, 6.8025, 0, 3);
-
-}
-
-#calendarText {
-    -fx-fill: BLACK;
-}
-#year{
-    -fx-fill: BLACK;
-}
-#month {
-    -fx-fill: BLACK;
-}
-
-#su {
-    -fx-fill: BLACK;
-}
-#mo {
-    -fx-fill: BLACK;
-}
-#tu {
-    -fx-fill: BLACK;
-}
-#we {
-    -fx-fill: BLACK;
-}
-#th {
-    -fx-fill: BLACK;
-}
-#fr {
-    -fx-fill: BLACK;
-}
-#sa {
-    -fx-fill: BLACK;
-}
 
 /* Optional: Set a default font for the entire application */
 .root {
@@ -264,36 +164,6 @@
 .table-view > .virtual-flow > .scroll-bar > .increment-button,
 .table-view > .virtual-flow > .scroll-bar > .decrement-button {
     -fx-opacity: 0;
-}
-#upcomingActivityBox:selected{
-    -fx-border-color: transparent;
-    -fx-background-color: transparent;
-}
-
-
-#dateCol{
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold
-}
-
-#textCol{
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold
-}
-
-#titleCol{
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold
-}
-
-#upcomingActivityBox .table-cell {
-    -fx-border-color: transparent;
 }
 
 .table-row-cell, .table-cell {

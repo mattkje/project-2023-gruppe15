@@ -30,8 +30,8 @@ import no.gruppe15.tools.Logger;
 public class ControlPanelApplication extends Application implements GreenhouseEventListener,
     CommunicationChannelListener {
   private static ControlPanelLogic logic;
-  private static final int WIDTH = 500;
-  private static final int HEIGHT = 400;
+  private static final int WIDTH = 1000;
+  private static final int HEIGHT = 600;
   private static CommunicationChannel channel;
 
   private TabPane nodeTabPane;

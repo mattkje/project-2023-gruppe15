@@ -177,7 +177,6 @@ public class GreenhouseSimulator {
       commands.add(commandString);
     }
 
-    System.out.println(formatSensorCommand(String.join("/", commands)));
     return formatSensorCommand(String.join("/", commands));
   }
 
