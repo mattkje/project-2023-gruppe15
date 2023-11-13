@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import no.gruppe15.listeners.greenhouse.NodeStateListener;
 import no.gruppe15.tools.Logger;
@@ -88,6 +86,7 @@ public class GreenhouseSimulator {
   private void initiateRealCommunication() {
     try {
       serverSocket = new ServerSocket(PORT_NUMBER);
+
       Logger.info("Server is now listening on port " + PORT_NUMBER);
     } catch (IOException e) {
       Logger.error("Could not set up TCP connection: " + e.getMessage());
@@ -108,7 +107,7 @@ public class GreenhouseSimulator {
     try {
       Socket clientSocket = listeningSocket.accept();
       Logger.info("New client connected from " + clientSocket.getRemoteSocketAddress());
-      return new ClientHandler(clientSocket, this);
+      return new ClientHandler(clientSocket, this, false);
     } catch (IOException e) {
       Logger.error("Could not accept client connection: " + e.getMessage());
       return null;

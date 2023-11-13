@@ -18,7 +18,7 @@ public class CommandControlStarter {
   public static void main(String[] args) {
     Logger.info("Starting control panel in command line...");
     ControlPanelLogic logic = new ControlPanelLogic();
-    ControlPanelSocket starter = new ControlPanelSocket(logic);
+    ControlPanelSocket starter = new ControlPanelSocket(logic, false);
     starter.openCommandLine();
   }
 }

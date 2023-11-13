@@ -5,6 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import no.gruppe15.tools.Logger;
 
 /**
@@ -18,9 +31,13 @@ public class ClientHandler extends Thread {
 
   private final GreenhouseSimulator simulator;
 
-  private final BufferedReader socketReader;
+  private BufferedReader socketReader;
 
-  private final PrintWriter socketWriter;
+  private PrintWriter socketWriter;
+  private static final String ALGORITHM = "AES";
+
+  private static SecretKeySpec savedSecretKey;
+  private boolean secure;
 
   /**
    * Creates an instance of ClientHandler.
@@ -29,12 +46,45 @@ public class ClientHandler extends Thread {
    * @param simulator Reference to the main TCP server class
    * @throws IOException When something goes wrong with establishing the input or output streams
    */
-  public ClientHandler(Socket socket, GreenhouseSimulator simulator) throws IOException {
+  public ClientHandler(Socket socket, GreenhouseSimulator simulator, boolean secure) throws IOException {
     this.simulator = simulator;
     this.socket = socket;
-    socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    socketWriter = new PrintWriter(socket.getOutputStream(), true);
+    if (secure) {
+      startEncryption();
+    } else {
+      socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      socketWriter = new PrintWriter(socket.getOutputStream(), true);
+    }
   }
+
+  private SecretKeySpec generateSecretKey() {
+    String keyString = "MySecretKey12345";
+    byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
+    return new SecretKeySpec(keyBytes, ALGORITHM);
+  }
+
+  public void startEncryption() {
+    try {
+      SecretKeySpec secretKey = generateSecretKey();
+
+      Cipher encryptCipher = Cipher.getInstance(ALGORITHM);
+      Cipher decryptCipher = Cipher.getInstance(ALGORITHM);
+      encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+      decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+      CipherOutputStream cipherOut = new CipherOutputStream(socket.getOutputStream(), encryptCipher);
+      CipherInputStream cipherIn = new CipherInputStream(socket.getInputStream(), decryptCipher);
+
+      socketWriter = new PrintWriter(cipherOut, true);
+      socketReader = new BufferedReader(new InputStreamReader(cipherIn));
+
+      Logger.info("Encryption setup completed successfully");
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException e) {
+      Logger.error("Error during encryption setup: " + e.getMessage());
+      throw new RuntimeException(e);
+    }
+  }
+
 
   /**
    * This method is responsible for handling client requests and executing commands.
@@ -42,7 +92,6 @@ public class ClientHandler extends Thread {
   @Override
   public void run() {
     String rawCommand;
-
     try {
       while ((rawCommand = socketReader.readLine()) != null) {
         processCommand(rawCommand);
@@ -74,7 +123,6 @@ public class ClientHandler extends Thread {
   private void handleRawCommand(String rawCommand) {
     if (rawCommand.equals("getNodes")) {
       handleGetNodesCommand();
-      handleUpdateSensorCommand();
     } if (rawCommand.equals("updateSensor")){
       handleUpdateSensorCommand();
     } else {

@@ -65,7 +65,7 @@ public class ControlPanelStarter {
    * @return
    */
   private CommunicationChannel initiateSocketCommunication(ControlPanelLogic logic) {
-    controlPanelSocket = new ControlPanelSocket(logic);
+    controlPanelSocket = new ControlPanelSocket(logic, false);
     logic.setCommunicationChannel(controlPanelSocket);
     return controlPanelSocket;
   }

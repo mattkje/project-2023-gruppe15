@@ -2,14 +2,23 @@ package no.gruppe15.controlpanel;
 
 import static no.gruppe15.greenhouse.GreenhouseSimulator.PORT_NUMBER;
 import static no.gruppe15.run.ControlPanelStarter.SERVER_HOST;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 import no.gruppe15.gui.controlpanel.CommandLineControlPanel;
 import no.gruppe15.tools.Logger;
 
@@ -27,14 +36,17 @@ public class ControlPanelSocket implements CommunicationChannel {
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
   private boolean isConnected = false;
+  private static final String ALGORITHM = "AES";
+  private boolean secure;
 
   /**
    * Creates an instance of ControlPanelSocket.
    *
    * @param logic The application logic class.
    */
-  public ControlPanelSocket(ControlPanelLogic logic) {
+  public ControlPanelSocket(ControlPanelLogic logic, boolean secure) {
     this.logic = logic;
+    this.secure = secure;
   }
 
   /**
@@ -71,7 +83,13 @@ public class ControlPanelSocket implements CommunicationChannel {
       socket = new Socket(SERVER_HOST, PORT_NUMBER);
       socketWriter = new PrintWriter(socket.getOutputStream(), true);
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+      if (secure) {
+        startEncryption();
+      }
+
       Logger.info("Successfully connected to: " + SERVER_HOST + ":" + PORT_NUMBER);
+
       continuousSensorUpdate();
       getNodes();
       isConnected = true;
@@ -82,7 +100,36 @@ public class ControlPanelSocket implements CommunicationChannel {
     }
   }
 
-  public void openCommandLine(){
+  private SecretKeySpec generateSecretKey() {
+    String keyString = "MySecretKey12345";
+    byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
+    return new SecretKeySpec(keyBytes, ALGORITHM);
+  }
+
+  public void startEncryption() {
+    try {
+      SecretKeySpec secretKey = generateSecretKey();
+
+      Cipher encryptCipher = Cipher.getInstance(ALGORITHM);
+      Cipher decryptCipher = Cipher.getInstance(ALGORITHM);
+      encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+      decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+      socketWriter = new PrintWriter(new CipherOutputStream
+          (socket.getOutputStream(), encryptCipher), true);
+      socketReader = new BufferedReader(new InputStreamReader
+          (new CipherInputStream(socket.getInputStream(), decryptCipher)));
+
+      Logger.info("Encryption setup completed successfully");
+    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+             IOException e) {
+      Logger.error("Error during encryption setup: " + e.getMessage());
+      throw new RuntimeException(e);
+    }
+  }
+
+
+  public void openCommandLine() {
     open();
     Scanner input = new Scanner(System.in);
     Thread commandThread = new Thread(() -> startCommandControl(input));
@@ -119,10 +166,8 @@ public class ControlPanelSocket implements CommunicationChannel {
     socketWriter.println("getNodes");
     Logger.info("Requesting nodes from server...");
     String nodes;
-    String sensors;
     try {
       nodes = socketReader.readLine();
-      sensors = socketReader.readLine();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -136,13 +181,13 @@ public class ControlPanelSocket implements CommunicationChannel {
   /**
    * This method should update the sensors continually.
    */
-  public void updateSensorData(){
+  public void updateSensorData() {
     socketWriter.println("updateSensor");
-    String sensors;
+    String sensors = "";
     try {
       sensors = socketReader.readLine();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      Logger.info("Stopping sensor reading");
     }
     logic.sensorStringSplitter(sensors);
   }
