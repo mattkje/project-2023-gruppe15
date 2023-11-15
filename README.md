@@ -1,4 +1,9 @@
+
 # Greenhouse application - Group 15
+
+# this-repo-is-deprecated-since-05102020
+
+[New repo](https://github.com/ntnu-datakomm/course-project-team-15).
 
 _Contributing members: Matti Kjellstadli, Håkon Svensen Karlsen, Di Xie, Adrian Faustino Johansen_
 
