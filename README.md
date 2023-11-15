@@ -1,7 +1,7 @@
 
 # Greenhouse application - Group 15
 
-# this-repo-is-deprecated-since-05102020
+# This repo is deprecated
 
 [New repo](https://github.com/ntnu-datakomm/course-project-team-15).
 
